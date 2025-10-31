@@ -1,0 +1,33 @@
+<MainScreen>:
+# BoxLayout:
+# orientation: 'vertical'
+# spacing: 8
+# padding: 12
+# BoxLayout:
+# size_hint_y: None
+# height: '48dp'
+# Label:
+# text: 'Katiana Store'
+# font_size: '20sp'
+# BoxLayout:
+# size_hint_y: None
+# height: '40dp'
+# TextInput:
+# id: busca
+# hint_text: 'Buscar produtos...'
+# Button:
+# text: 'Buscar'
+# on_release: app.buscar(busca.text)
+# ScrollView:
+# GridLayout:
+# id: produtos_grid
+# cols: 1
+# spacing: 8
+# size_hint_y: None
+# height: self.minimum_height
+# BoxLayout:
+# size_hint_y: None
+# height: '48dp'
+# Button:
+# text: 'Carrinho'
+# on_release: app.mostrar_carrinho()
