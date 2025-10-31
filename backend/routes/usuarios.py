@@ -4,9 +4,6 @@ from utils.auth import gerar_token, token_required
 
 bp_usuarios = Blueprint('usuarios', __name__)
 
-# Usuário de teste (opcional: você pode criar no init_db)
-# email: teste@x.com
-# senha: 1234
 
 @bp_usuarios.route('/api/login', methods=['POST'])
 def login():

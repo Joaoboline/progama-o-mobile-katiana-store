@@ -8,9 +8,7 @@ class Usuario(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     senha = db.Column(db.String(120), nullable=False)  # senha em texto simples apenas para teste
 
-# -------------------------------
-# Produto
-# -------------------------------
+
 class Produto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(120), nullable=False)
@@ -21,9 +19,7 @@ class Produto(db.Model):
     imagem = db.Column(db.String(255))
     avaliacao_media = db.Column(db.Float, default=0)
 
-# -------------------------------
-# Pedido
-# -------------------------------
+
 class Pedido(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'))
@@ -34,9 +30,7 @@ class Pedido(db.Model):
     usuario = db.relationship('Usuario', backref='pedidos')
     itens = db.relationship('PedidoItem', backref='pedido', cascade='all, delete-orphan')
 
-# -------------------------------
-# PedidoItem
-# -------------------------------
+
 class PedidoItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     pedido_id = db.Column(db.Integer, db.ForeignKey('pedido.id'))
@@ -46,9 +40,7 @@ class PedidoItem(db.Model):
 
     produto = db.relationship('Produto')
 
-# -------------------------------
-# Avaliação
-# -------------------------------
+
 class Avaliacao(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     produto_id = db.Column(db.Integer, db.ForeignKey('produto.id'))

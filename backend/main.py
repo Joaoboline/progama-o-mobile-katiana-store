@@ -11,7 +11,7 @@ def create_app():
 
     return app
 
-# só rodar quando executar main.py diretamente
+
 if __name__ == "__main__":
     app = create_app()
     app.run(debug=True)

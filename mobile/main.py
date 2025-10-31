@@ -7,11 +7,10 @@ from kivy.uix.image import AsyncImage
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
 
-# -------------------------------
-# TROQUE pelo IP do seu backend Flask
+
 API_URL = "http://172.20.10.2:5000/api/produtos"
 
-# Estilo simples para os cartões
+
 KV = """
 <ProdutoCard>:
     orientation: 'horizontal'
