@@ -9,8 +9,11 @@ def create_app():
     db.init_app(app)
     app.register_blueprint(bp_usuarios)
 
-    return app
+    @app.route('/')
+    def home():
+        return "Backend Katiana Store funcionando!"
 
+    return app
 
 if __name__ == "__main__":
     app = create_app()

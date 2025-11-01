@@ -26,3 +26,7 @@ def me(usuario):
         'email': usuario.email,
         'nome': usuario.nome
     })
+{
+  "email": "teste@x.com",
+  "senha": "1234"
+}

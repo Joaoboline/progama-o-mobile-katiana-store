@@ -1,3 +1,5 @@
+import requests
+
 class APIClient:
     def __init__(self, base_url):
         self.base_url = base_url.rstrip('/')
@@ -7,32 +9,26 @@ class APIClient:
         self.token = token
 
     def headers(self):
-        h = {'Content-Type':'application/json'}
+        h = {'Content-Type': 'application/json'}
         if self.token:
             h['Authorization'] = f'Bearer {self.token}'
         return h
 
-    def register(self, nome, email, senha):
-        payload = {'nome': nome, 'email': email, 'senha': senha}
-        r = requests.post(f'{self.base_url}/api/register', json=payload, headers=self.headers())
-        return r.json(), r.status_code
-
     def login(self, email, senha):
         payload = {'email': email, 'senha': senha}
-        r = requests.post(f'{self.base_url}/api/login', json=payload, headers=self.headers())
+        r = requests.post(f'{self.base_url}/login', json=payload, headers=self.headers())
         if r.status_code == 200:
             data = r.json()
-            self.set_token(data.get('token'))
+            self.set_token(data.get('token'))  # Guarda o token para futuras requisições
+        return r.json(), r.status_code
+
+    def me(self):
+        r = requests.get(f'{self.base_url}/me', headers=self.headers())
         return r.json(), r.status_code
 
     def listar_produtos(self, q=None, categoria=None):
         params = {}
         if q: params['q'] = q
         if categoria: params['categoria'] = categoria
-        r = requests.get(f'{self.base_url}/api/produtos', params=params, headers=self.headers())
-        return r.json(), r.status_code
-
-    def criar_pedido(self, itens, forma_pagamento='pix'):
-        payload = {'itens': itens, 'forma_pagamento': forma_pagamento}
-        r = requests.post(f'{self.base_url}/api/pedido', json=payload, headers=self.headers())
+        r = requests.get(f'{self.base_url}/produtos', params=params, headers=self.headers())
         return r.json(), r.status_code
