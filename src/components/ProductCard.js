@@ -1,52 +1,58 @@
-import React, { useContext } from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
-import { CartContext } from "../context/CartContext";
+import React from "react";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 
-export default function ProductCard({ produto }) {
-  const { adicionarAoCarrinho } = useContext(CartContext);
-
+export default function ProductCard({ produto, onAdd }) {
   return (
-    <TouchableOpacity style={styles.card} onPress={() => adicionarAoCarrinho(produto)}>
-      <Image source={{ uri: produto.imagem }} style={styles.image} />
+    <View style={styles.card}>
+      <Image source={{ uri: produto.imagem }} style={styles.imagem} />
       <Text style={styles.nome}>{produto.nome}</Text>
-      <Text style={styles.preco}>{produto.preco}</Text>
-      <Text style={styles.botao}>+ Adicionar</Text>
-    </TouchableOpacity>
+      <Text style={styles.preco}>R$ {produto.preco.toFixed(2)}</Text>
+
+      <TouchableOpacity style={styles.botao} onPress={() => onAdd(produto)}>
+        <Text style={styles.textoBotao}>Adicionar</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 10,
+    flex: 1,
+    backgroundColor: "#f8f8f8",
     margin: 8,
+    borderRadius: 12,
+    padding: 10,
     alignItems: "center",
     shadowColor: "#000",
     shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-    width: 150,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 3,
+    elevation: 3,
   },
-  image: {
-    width: 100,
-    height: 100,
+  imagem: {
+    width: 120,
+    height: 120,
     borderRadius: 10,
   },
   nome: {
-    marginTop: 10,
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
+    fontSize: 15,
+    fontWeight: "600",
+    textAlign: "center",
+    marginTop: 8,
   },
   preco: {
-    color: "#00a86b",
     fontSize: 14,
-    marginTop: 5,
+    color: "#FF6347",
+    marginVertical: 5,
   },
   botao: {
-    marginTop: 8,
-    color: "#007AFF",
-    fontWeight: "bold",
+    backgroundColor: "#FF6347",
+    paddingVertical: 6,
+    paddingHorizontal: 15,
+    borderRadius: 8,
+  },
+  textoBotao: {
+    color: "#fff",
+    fontWeight: "600",
   },
 });

@@ -1,36 +1,40 @@
-import React, { createContext, useState, useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { createContext, useState, useContext } from "react";
 
-export const CartContext = createContext();
+const CartContext = createContext();
 
-export default function CartProvider({ children }) {
-  const [carrinho, setCarrinho] = useState([]);
+export const CartProvider = ({ children }) => {
+  const [cartItems, setCartItems] = useState([]);
 
-  // Carregar carrinho salvo
-  useEffect(() => {
-    const carregarCarrinho = async () => {
-      const data = await AsyncStorage.getItem("@carrinho");
-      if (data) setCarrinho(JSON.parse(data));
-    };
-    carregarCarrinho();
-  }, []);
-
-  // Salvar sempre que atualizar
-  useEffect(() => {
-    AsyncStorage.setItem("@carrinho", JSON.stringify(carrinho));
-  }, [carrinho]);
-
-  const adicionarAoCarrinho = (produto) => {
-    setCarrinho((prev) => [...prev, produto]);
+  const addToCart = (product) => {
+    const exists = cartItems.find((item) => item.id === product.id);
+    if (exists) {
+      setCartItems(
+        cartItems.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        )
+      );
+    } else {
+      setCartItems([...cartItems, { ...product, quantity: 1 }]);
+    }
   };
 
-  const removerDoCarrinho = (id) => {
-    setCarrinho((prev) => prev.filter((item) => item.id !== id));
+  const removeFromCart = (id) => {
+    setCartItems(cartItems.filter((item) => item.id !== id));
+  };
+
+  const clearCart = () => {
+    setCartItems([]);
   };
 
   return (
-    <CartContext.Provider value={{ carrinho, adicionarAoCarrinho, removerDoCarrinho }}>
+    <CartContext.Provider
+      value={{ cartItems, addToCart, removeFromCart, clearCart }}
+    >
       {children}
     </CartContext.Provider>
   );
-}
+};
+
+export const useCart = () => useContext(CartContext);
