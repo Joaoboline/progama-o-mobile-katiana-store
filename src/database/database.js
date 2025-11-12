@@ -1,40 +1,31 @@
 import * as SQLite from "expo-sqlite";
 
-let db;
+const db = SQLite.openDatabaseSync("katiana.db");
 
-export const getDB = async () => {
-  if (!db) {
-    db = await SQLite.openDatabaseAsync("katiana.db");
-  }
-  return db;
-};
-
-// Cria a tabela de produtos, se não existir
-export const initDatabase = async () => {
-  const database = await getDB();
-  await database.execAsync(`
+export async function initDatabase() {
+  await db.execAsync(`
     CREATE TABLE IF NOT EXISTS produtos (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      nome TEXT NOT NULL,
-      preco REAL NOT NULL,
+      nome TEXT,
+      preco REAL,
       imagem TEXT
     );
   `);
-  console.log("✅ Banco de dados criado e tabela pronta!");
-};
+  console.log("Banco criado com sucesso!");
+}
 
-// Insere um produto
-export const addProduto = async (nome, preco, imagem) => {
-  const database = await getDB();
-  await database.runAsync(
+export async function addProduto(nome, preco, imagem) {
+  await db.runAsync(
     "INSERT INTO produtos (nome, preco, imagem) VALUES (?, ?, ?)",
     [nome, preco, imagem]
   );
-};
+}
 
-// Busca todos os produtos
-export const getProdutos = async () => {
-  const database = await getDB();
-  const results = await database.getAllAsync("SELECT * FROM produtos");
-  return results;
-};
+export async function getProdutos() {
+  return await db.getAllAsync("SELECT * FROM produtos");
+}
+
+export async function resetDatabase() {
+  await db.execAsync("DELETE FROM produtos;");
+  console.log("Banco resetado!");
+}

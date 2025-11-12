@@ -1,74 +1,90 @@
-import React from "react";
-import { View, Text, FlatList, StyleSheet, Alert } from "react-native";
-import { useCart } from "../context/CartContext";
-import ProductCard from "../components/ProductCard";
-
-const produtos = [
-  {
-    id: 1,
-    nome: "Conjunto de Panelas Inox",
-    preco: 249.9,
-    imagem: "https://images.unsplash.com/photo-1616628188466-bb219a03e8e3?w=600",
-  },
-  {
-    id: 2,
-    nome: "Jogo de Copos de Vidro",
-    preco: 79.9,
-    imagem: "https://images.unsplash.com/photo-1606813902771-d9f3b6a0bfc3?w=600",
-  },
-  {
-    id: 3,
-    nome: "Conjunto de Pratos Cerâmicos",
-    preco: 99.9,
-    imagem: "https://images.unsplash.com/photo-1565958011702-44e211b7e8b3?w=600",
-  },
-  {
-    id: 4,
-    nome: "Faqueiro Inox 24 Peças",
-    preco: 149.9,
-    imagem: "https://images.unsplash.com/photo-1606313564200-9b69d42d0e58?w=600",
-  },
-];
+import React, { useContext } from "react";
+import { View,Text,FlatList,Image,TouchableOpacity,StyleSheet,StatusBar, } from "react-native";
+import { CartContext } from "../context/CartContext";
+import { useNavigation } from "@react-navigation/native";
 
 export default function HomeScreen() {
-  const { addToCart } = useCart();
+  const { addToCart } = useContext(CartContext);
+  const navigation = useNavigation();
 
-  const handleAdd = (produto) => {
-    addToCart(produto);
-    Alert.alert("Produto adicionado!", `${produto.nome} foi adicionado ao carrinho.`);
-  };
+  const produtos = [
+    { id: 1, nome: "Jogo de Taças 325ml", preco: 87.0, imagem: require("../../assets/produtos/tacas.jpg") },
+    { id: 2, nome: "Lençol Malha Solteiro", preco: 88.0, imagem: require("../../assets/produtos/lencol.jpg") },
+    { id: 3, nome: "Kit Cozinha 2 Peças", preco: 38.0, imagem: require("../../assets/produtos/cozinha.jpg") },
+    { id: 4, nome: "Jogo de Banheiro Indiano", preco: 70.0, imagem: require("../../assets/produtos/banheiro.jpg") },
+  ];
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>🛍️ Katiana Store</Text>
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+
+      <Text style={styles.logo}> Katiana Store</Text>
+      <Text style={styles.subtitulo}>Produtos selecionados para você</Text>
 
       <FlatList
         data={produtos}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <ProductCard produto={item} onAdd={handleAdd} />
-        )}
         numColumns={2}
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.lista}
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            <Image source={item.imagem} style={styles.imagem} />
+            <Text style={styles.nome}>{item.nome}</Text>
+            <Text style={styles.preco}>R$ {item.preco.toFixed(2)}</Text>
+            <TouchableOpacity
+              style={styles.botao}
+              onPress={() => {
+                addToCart(item);
+                navigation.navigate("Carrinho");
+              }}
+            >
+              <Text style={styles.textoBotao}>Comprar</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    paddingTop: 50,
-  },
-  titulo: {
-    fontSize: 26,
+  container: { flex: 1, backgroundColor: "#F8F8F8", paddingTop: 50 },
+  logo: {
+    fontSize: 30,
     fontWeight: "bold",
+    color: "#E63946",
+    textAlign: "center",
+    letterSpacing: 1,
+  },
+  subtitulo: {
+    fontSize: 15,
+    color: "#555",
     textAlign: "center",
     marginBottom: 20,
-    color: "#FF6347",
   },
-  lista: {
-    paddingHorizontal: 10,
+  lista: { paddingHorizontal: 10, paddingBottom: 100 },
+  card: {
+    flex: 1,
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    padding: 12,
+    margin: 8,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
   },
+  imagem: { width: 130, height: 130, borderRadius: 10, marginBottom: 8 },
+  nome: { fontSize: 15, fontWeight: "600", textAlign: "center", color: "#333" },
+  preco: { fontSize: 15, color: "#E63946", marginVertical: 4, fontWeight: "bold" },
+  botao: {
+    backgroundColor: "#E63946",
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    marginTop: 6,
+  },
+  textoBotao: { color: "#fff", fontWeight: "bold", fontSize: 14 },
 });

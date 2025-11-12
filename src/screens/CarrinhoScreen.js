@@ -1,73 +1,54 @@
-import React from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-  Alert,
-} from "react-native";
-import { useCart } from "../context/CartContext";
+import React, { useContext } from "react";
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import { CartContext } from "../context/CartContext";
+import { useNavigation } from "@react-navigation/native";
 
 export default function CarrinhoScreen() {
-  const { cartItems, removeFromCart, clearCart } = useCart();
+  const { cartItems, removeFromCart, clearCart } = useContext(CartContext);
+  const navigation = useNavigation();
 
-  const total = cartItems
-    .reduce((acc, item) => acc + item.preco * item.quantity, 0)
-    .toFixed(2);
+  const total = cartItems.reduce((sum, item) => sum + parseFloat(item.preco), 0);
 
-  const handleCheckout = () => {
-    if (cartItems.length === 0) {
-      Alert.alert("Carrinho vazio", "Adicione algum produto antes de finalizar!");
-      return;
-    }
-    Alert.alert("Compra finalizada!", "Obrigado por comprar com a Katiana Store 🧡");
+  const finalizarPedido = () => {
+    const pedido = {
+      data: new Date().toLocaleString("pt-BR"),
+      itens: cartItems,
+      total,
+    };
     clearCart();
+    navigation.navigate("Confirmacao", { pedido });
   };
-
-  const renderItem = ({ item }) => (
-    <View style={styles.item}>
-      <Image source={{ uri: item.imagem }} style={styles.imagem} />
-      <View style={styles.info}>
-        <Text style={styles.nome}>{item.nome}</Text>
-        <Text style={styles.preco}>R$ {item.preco.toFixed(2)}</Text>
-        <Text style={styles.quantidade}>Qtd: {item.quantity}</Text>
-      </View>
-      <TouchableOpacity
-        onPress={() => removeFromCart(item.id)}
-        style={styles.botaoRemover}
-      >
-        <Text style={styles.textoRemover}>X</Text>
-      </TouchableOpacity>
-    </View>
-  );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>🛒 Carrinho</Text>
+      <Text style={styles.title}>Carrinho de Compras</Text>
 
       {cartItems.length === 0 ? (
-        <View style={styles.vazio}>
-          <Text style={styles.textoVazio}>Seu carrinho está vazio 😔</Text>
+        <View style={styles.center}>
+          <Text style={styles.empty}>Seu carrinho está vazio!</Text>
         </View>
       ) : (
-        <>
+        <View style={styles.center}>
           <FlatList
             data={cartItems}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderItem}
-            contentContainerStyle={styles.lista}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <View style={styles.item}>
+                <Text style={styles.name}>{item.nome}</Text>
+                <Text style={styles.price}>R$ {item.preco}</Text>
+                <TouchableOpacity onPress={() => removeFromCart(item.id)}>
+                  <Text style={styles.remove}>Remover</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           />
 
-          <View style={styles.resumo}>
-            <Text style={styles.total}>Total: R$ {total}</Text>
+          <Text style={styles.total}>Total: R$ {total.toFixed(2)}</Text>
 
-            <TouchableOpacity style={styles.botaoFinalizar} onPress={handleCheckout}>
-              <Text style={styles.textoBotao}>Finalizar Compra</Text>
-            </TouchableOpacity>
-          </View>
-        </>
+          <TouchableOpacity style={styles.button} onPress={finalizarPedido}>
+            <Text style={styles.buttonText}>Finalizar Pedido</Text>
+          </TouchableOpacity>
+        </View>
       )}
     </View>
   );
@@ -77,95 +58,46 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingTop: 40,
+    padding: 20,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  titulo: {
+  center: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  title: {
     fontSize: 26,
     fontWeight: "bold",
-    textAlign: "center",
-    color: "#FF6347",
-    marginBottom: 10,
-  },
-  lista: {
-    paddingHorizontal: 10,
+    color: "#E63946",
+    marginBottom: 20,
   },
   item: {
     flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#f8f8f8",
-    marginVertical: 6,
-    borderRadius: 10,
+    justifyContent: "space-between",
+    backgroundColor: "#f9f9f9",
     padding: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 1 },
-    shadowRadius: 2,
-    elevation: 2,
+    borderRadius: 10,
+    width: 300,
+    marginVertical: 6,
   },
-  imagem: {
-    width: 70,
-    height: 70,
-    borderRadius: 8,
-  },
-  info: {
-    flex: 1,
-    marginLeft: 10,
-  },
-  nome: {
-    fontSize: 15,
-    fontWeight: "600",
-  },
-  preco: {
-    fontSize: 14,
-    color: "#FF6347",
-    marginTop: 3,
-  },
-  quantidade: {
-    fontSize: 12,
-    color: "#666",
-    marginTop: 2,
-  },
-  botaoRemover: {
-    backgroundColor: "#FF6347",
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  textoRemover: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  resumo: {
-    borderTopWidth: 1,
-    borderTopColor: "#ddd",
-    padding: 15,
-  },
+  name: { fontSize: 16, fontWeight: "600" },
+  price: { color: "#E63946", fontWeight: "600" },
+  remove: { color: "red", fontSize: 13 },
   total: {
     fontSize: 18,
     fontWeight: "bold",
+    marginVertical: 15,
     textAlign: "center",
-    marginBottom: 10,
   },
-  botaoFinalizar: {
-    backgroundColor: "#FF6347",
-    paddingVertical: 12,
-    borderRadius: 8,
+  button: {
+    backgroundColor: "#E63946",
+    padding: 15,
+    borderRadius: 10,
     alignItems: "center",
+    width: 200,
+    marginBottom: 100,
   },
-  textoBotao: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  vazio: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  textoVazio: {
-    fontSize: 16,
-    color: "#999",
-  },
+  buttonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
+  empty: { fontSize: 16, color: "#666", textAlign: "center" },
 });

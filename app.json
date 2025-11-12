@@ -1,26 +1,28 @@
 {
   "expo": {
-    "name": "Katiana Store",
-    "slug": "katiana-store",
+    "name": "KatianaStore",
+    "slug": "KatianaStore",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
     "android": {
-      "jsEngine": "hermes",
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.katianastore"
     },
-    "ios": {
-      "jsEngine": "hermes"
-    },
-    "assetBundlePatterns": ["**/*"]
+    "web": {
+      "favicon": "./assets/icon.png"
+    }
   }
 }
-
